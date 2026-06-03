@@ -7,11 +7,13 @@ struct Item {
     owners: Vec<u8>,
 }
 
+#[derive(Clone)]
 struct Words {
     direction: Orientation,
     content: String,
 }
 
+#[derive(Clone)]
 enum Orientation {
     North,
     Northeast,
@@ -39,7 +41,7 @@ fn main() {
         }
     }
 
-    let board = assemble_board(length, words, false);
+    let board = assemble_board(length, words, false).unwrap();
     for i in 0..board.len() { 
         let mut s = String::new();
         for j in 0..board.len(){
@@ -75,12 +77,13 @@ fn read_input(s: String) -> Vec<Words>{
     words
 }
 
-fn assemble_board(width: usize, words: Vec<Words>, transparent: bool) -> Vec<Vec<Item>>{
+fn assemble_board(width: usize, words: Vec<Words>, transparent: bool) -> Option<Vec<Vec<Item>>>{
     let mut rng = rand::rng();
+    //board creation
     let mut board: Vec<Vec<Item>> = Vec::new();
-    for i in 0..width {
+    for _i in 0..width {
         let mut row: Vec<Item> = Vec::new();
-        for j in 0..width {
+        for _j in 0..width {
             let mut letter = '/';
             if !transparent{
                 letter = rng.sample(rand::distr::Alphabetic).to_ascii_lowercase() as char;
@@ -93,5 +96,18 @@ fn assemble_board(width: usize, words: Vec<Words>, transparent: bool) -> Vec<Vec
         }
         board.push(row);
     }
-    board
+    //letter integration 
+    for i in 0..words.len() - 1{
+        let border = words[i].content.len() + 1 - width;
+        let pos = [1, 0];
+        if !attach_word(&mut board, &words[i], pos){
+            assemble_board(width.clone(), words.clone(), transparent);
+            return None;
+        }
+    } 
+    Some(board)
+}
+
+fn attach_word(board: &mut Vec<Vec<Item>>, words: &Words, pos: [i32; 2]) -> bool{
+    false
 }
