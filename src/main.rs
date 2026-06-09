@@ -114,6 +114,7 @@ fn assemble_board(width: usize, words: Vec<Words>, transparent: bool) -> Vec<Vec
     //letter integration 
     for i in 0..words.len() - 1{
         if !attach_word(&mut board, &words[i]){
+            //If recursion doesn't work as I think it does, this may have an edge case
             assemble_board(width.clone(), words.clone(), transparent);
         }
     } 
@@ -122,6 +123,16 @@ fn assemble_board(width: usize, words: Vec<Words>, transparent: bool) -> Vec<Vec
 
 fn attach_word(board: &mut Vec<Vec<Item>>, word: &Words) -> bool{
     let border = word.content.len() + 1 - board.len();
+    let board_len = board.len();
+    //value 1 & 2 represent x and y respectively
+    //value 3 is weight, cannot be > 1
+    //value 4 is just the enum Orientation
+    let pos_info = (0u8, 0u8, 0f32, Orientation::None);
+    for i in 0..border - 1{
+        for j in 0..board_len - 1{
+
+        }
+    }
     //check to see which placements have intersections with existing words
     //immediately place the word if the intersection is applicable
     //having it just return false would create a loop
