@@ -122,19 +122,38 @@ fn assemble_board(width: usize, words: Vec<Words>, transparent: bool) -> Vec<Vec
 }
 
 fn attach_word(board: &mut Vec<Vec<Item>>, word: &Words) -> bool{
-    let border = word.content.len() + 1 - board.len();
-    let board_len = board.len();
-    //value 1 & 2 represent x and y respectively
-    //value 3 is weight, cannot be > 1
-    //value 4 is just the enum Orientation
-    let pos_info = (0u8, 0u8, 0f32, Orientation::None);
-    for i in 0..border - 1{
-        for j in 0..board_len - 1{
+    let border = (word.content.len() + 1 - board.len()).try_into().unwrap();
+    let board_len = (board.len()).try_into().unwrap();
 
-        }
+    let mut pos1 = search_area(&board, &word, [0, border], [0, board_len]); //vertical
+    let pos2 = search_area(&board, &word, [border, (border - board_len).abs()], [0, border]); //horizontal
+    let mut pos3 = search_area(&board, &word, [board_len - border, board_len], [0, board_len]); //vertical
+    let pos4 = search_area(&board, &word, [border, (border - board_len).abs()], [board_len - border, board_len]); //horizontal
+
+    if pos1.2 < pos2.2{
+        pos1 = pos2;
+    }
+    if pos3.2 < pos4.2{
+        pos3 = pos4;
+    }
+    if pos1.2 < pos3.2{
+        pos1 = pos3;
     }
     //check to see which placements have intersections with existing words
     //immediately place the word if the intersection is applicable
     //having it just return false would create a loop
     true
+}
+
+fn search_area(board: &Vec<Vec<Item>>, word: &Words, x: [i32; 2], y: [i32; 2]) -> (u8, u8, f32, Orientation){
+    //value 1 & 2 represent x and y respectively
+    //value 3 is weight, cannot be > 1
+    //value 4 is just the enum Orientation    
+    let pos_info = (0u8, 0u8, 0f32, Orientation::None);        
+    for x in x[0]..x[1] - 1{
+        for y in y[0]..y[1] - 1{
+
+        } 
+    }
+    pos_info
 }
